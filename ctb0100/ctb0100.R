@@ -65,7 +65,7 @@ any(table(ctb0100_event[, observacao_id]) > 1)
 # new: data_ano
 # This study did not provide the data collection date. 
 data.table::setnames(ctb0100_event, old = "Ano de coleta", new = "data_ano")
-ctb0100_event[, data_ano := NA_character_]
+ctb0100_event[, data_ano := as.integer(data_ano)]
 ctb0100_event[, .N, by = data_ano]
 
 # ano_fonte
@@ -201,6 +201,7 @@ ctb0100_layer[, amostra_id := NA_real_]
 # old: Profundidade inicial [cm]
 # new: profund_sup
 data.table::setnames(ctb0100_layer, old = "Profundidade inicial [cm]", new = "profund_sup")
+ctb0100_layer[, profund_sup := depth_slash(profund_sup), by = .I]
 ctb0100_layer[, profund_sup := as.numeric(profund_sup)]
 summary(ctb0100_layer[, profund_sup])
 
@@ -208,6 +209,8 @@ summary(ctb0100_layer[, profund_sup])
 # old: Profundidade final [cm]
 # new: profund_inf
 data.table::setnames(ctb0100_layer, old = "Profundidade final [cm]", new = "profund_inf")
+ctb0100_layer[, profund_inf := depth_slash(profund_inf), by = .I]
+ctb0100_layer[, profund_inf := depth_plus(profund_inf), by = .I]
 ctb0100_layer[, profund_inf := as.numeric(profund_inf)]
 summary(ctb0100_layer[, profund_inf])
 
@@ -312,7 +315,7 @@ if (FALSE) {
     ctb0100[coord_datum == 4326],
     coords = c("coord_x", "coord_y"), crs = 4326
   )
-  mapview::mapview(ctb0100_sf["argila"])
+  mapview::mapview(ctb0100_sf["areia"], layer.name ="areia")
 }
 
 # Write to disk ####################################################################################
